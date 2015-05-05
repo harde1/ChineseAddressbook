@@ -135,11 +135,8 @@
 		4645F065187D9667007E46F8 = {
 			isa = PBXGroup;
 			children = (
-				F403485B1AF871D400C3E7B6 /* AddressBookViewController.h */,
-				F403485C1AF871D400C3E7B6 /* AddressBookViewController.m */,
+				F403485E1AF894E500C3E7B6 /* Addressbook */,
 				4645F897187DA0BA007E46F8 /* Screenshot 2014.01.08 23.01.16.png */,
-				4645F0CB187D96A6007E46F8 /* pinyin */,
-				4645F0A6187D969F007E46F8 /* RHAddressBook */,
 				4645F077187D9667007E46F8 /* AddressbookDemo */,
 				4645F096187D9667007E46F8 /* AddressbookDemoTests */,
 				4645F070187D9667007E46F8 /* Frameworks */,
@@ -253,6 +250,17 @@
 				4645F0CD187D96A6007E46F8 /* pinyin.h */,
 			);
 			path = pinyin;
+			sourceTree = "<group>";
+		};
+		F403485E1AF894E500C3E7B6 /* Addressbook */ = {
+			isa = PBXGroup;
+			children = (
+				4645F0A6187D969F007E46F8 /* RHAddressBook */,
+				4645F0CB187D96A6007E46F8 /* pinyin */,
+				F403485B1AF871D400C3E7B6 /* AddressBookViewController.h */,
+				F403485C1AF871D400C3E7B6 /* AddressBookViewController.m */,
+			);
+			path = Addressbook;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
