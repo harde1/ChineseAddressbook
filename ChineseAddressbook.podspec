@@ -16,6 +16,8 @@ Pod::Spec.new do |s|
 
   s.homepage     = "https://github.com/harde1/ChineseAddressbook"
 
+  s.requires_arc = true
+ 
   s.license      = "MIT (example)"
 
   s.author             = { "harde1" => "email@address.com" }
@@ -30,7 +32,7 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'AddressBook' do |ss|
-    ss.source_files = 'Addressbook/{RHMultiValue,RHAddressBook,RHAddressBookGeoResult,RHAddressBookSharedServices}.{h,m}'
+    ss.source_files = 'Addressbook/{RHSource,RHRecord,RHMultiValue,RHAddressBook,RHAddressBookGeoResult,RHAddressBookSharedServices}.{h,m}'
     ss.frameworks = 'AddressBook'
   end
  
