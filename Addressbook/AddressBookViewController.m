@@ -12,7 +12,7 @@
 #import "pinyin.h"
 #import <AddressBookUI/AddressBookUI.h>
 
-@interface AddressBookViewController ()
+@interface AddressBookViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
     RHAddressBook *addressBook;
     NSMutableDictionary *friendDictionary;
@@ -20,7 +20,7 @@
     
     NSMutableArray *dataSource;
 }
-@property (weak, nonatomic) IBOutlet UITableView *mtableView;
+@property (strong, nonatomic) UITableView *mtableView;
 @end
 
 @implementation AddressBookViewController
@@ -28,6 +28,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+        [self.view addSubview:tableview];
+        tableview.delegate = self;
+        tableview.dataSource = self;
+        tableview;
+    });
+    
     
     RHAddressBook *ab = [[RHAddressBook alloc] init] ;
     if ([RHAddressBook authorizationStatus] == RHAuthorizationStatusNotDetermined){
