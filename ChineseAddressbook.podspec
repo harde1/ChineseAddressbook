@@ -24,6 +24,27 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/harde1/ChineseAddressbook.git", :commit => "ea0bcd87cfb95b8dc2b5fb0d66071596507db42f" }
   s.source_files  = "Addressbook","Addressbook/pinyin/*.{c,h}","Addressbook/RHAddressBook/*.{m,h}"
   # s.exclude_files = "Classes/Exclude"
-
+  s.subspec 'AddressBookUI' do |ss|
+    ss.source_files = 'Addressbook/AddressBookViewController.{h,m}'
+    ss.frameworks = 'AddressBookUI'
+  end
+  
+  s.subspec 'AddressBook' do |ss|
+    ss.source_files = 'Addressbook/{RHMultiValue,RHAddressBook,RHAddressBookGeoResult,RHAddressBookSharedServices}.{h,m}'
+    ss.frameworks = 'AddressBook'
+  end
  
+ 
+ 
+  s.subspec 'CoreLocation' do |ss|
+    ss.source_files = 'Addressbook/{RHAddressBookGeoResult,RHAddressBookSharedServices}.{h,m}'
+    ss.frameworks = 'CoreLocation'
+  end
+  
+  
+  
+   s.subspec 'CommonCrypto' do |ss|
+    ss.source_files = 'Addressbook/RHAddressBookGeoResult.m'
+    ss.frameworks = 'CommonCrypto'
+  end
 end
