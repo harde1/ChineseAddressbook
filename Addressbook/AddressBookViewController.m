@@ -20,7 +20,7 @@
     
     NSMutableArray *dataSource;
 }
-@property (strong, nonatomic) UITableView *mtableView;
+@property (weak, nonatomic)IBOutlet UITableView *mtableView;
 @end
 
 @implementation AddressBookViewController
@@ -29,12 +29,12 @@
 {
     [super viewDidLoad];
     
-    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-        [self.view addSubview:tableview];
-        tableview.delegate = self;
-        tableview.dataSource = self;
-        tableview;
-    });
+//    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+//        [self.view addSubview:tableview];
+//        tableview.delegate = self;
+//        tableview.dataSource = self;
+//        tableview;
+//    });
     
     
     RHAddressBook *ab = [[RHAddressBook alloc] init] ;
