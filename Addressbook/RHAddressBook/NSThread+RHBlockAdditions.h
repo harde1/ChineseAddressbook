@@ -32,7 +32,7 @@
 // tasks need to be performed on a single thread for thread safety etc.
 
 #import <Foundation/Foundation.h>
-
+#import "RHARCSupport.h"
 typedef void (^VoidBlock)(void);
 
 @interface NSThread (RHBlockAdditions)

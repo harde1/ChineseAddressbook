@@ -30,7 +30,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/AddressBook.h>
-
+#import "RHARCSupport.h"
 //enable framework debug logging (by default, enabled if DEBUG is defined, change FALSE to TRUE to enable always)
 #ifndef RH_AB_ENABLE_DEBUG_LOGGING
     #define RH_AB_ENABLE_DEBUG_LOGGING  ( defined(DEBUG) || FALSE )

@@ -29,7 +29,7 @@
 //
 
 #import "RHRecord.h"
-
+#import "RHARCSupport.h"
 #import <UIKit/UIKit.h>
 #import "RHMultiValue.h"
 #import "RHPersonLabels.h"

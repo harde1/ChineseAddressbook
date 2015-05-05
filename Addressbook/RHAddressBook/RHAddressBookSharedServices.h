@@ -29,6 +29,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "RHARCSupport.h"
 #import <CoreLocation/CoreLocation.h>
 #import <AddressBook/AddressBook.h>
 

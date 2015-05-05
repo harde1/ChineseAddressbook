@@ -44,9 +44,4 @@ Pod::Spec.new do |s|
   end
   
   
-  
-   s.subspec 'CommonCrypto' do |ss|
-    ss.source_files = 'Addressbook/RHAddressBookGeoResult.m'
-    ss.frameworks = 'CommonCrypto'
-  end
 end
