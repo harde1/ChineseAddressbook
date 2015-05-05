@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   # Or just: s.author    = "harde1"
 
   s.source       = { :git => "https://github.com/harde1/ChineseAddressbook.git", :commit => "ea0bcd87cfb95b8dc2b5fb0d66071596507db42f" }
-  s.source_files  = "Addressbook","Addressbook/pinyin/*.{c,h}","Addressbook/RHAddressBook/*.{m,h}"
+  s.source_files  = "Addressbook/*.{h,m,xib}","Addressbook/pinyin/*.{c,h}","Addressbook/RHAddressBook/*.{m,h}"
   # s.exclude_files = "Classes/Exclude"
   s.subspec 'AddressBookUI' do |ss|
     ss.source_files = 'Addressbook/AddressBookViewController.{h,m}'
