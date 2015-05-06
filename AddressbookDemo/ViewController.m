@@ -11,8 +11,7 @@
 
 @interface ViewController ()
 @property(nonatomic,assign)NSInteger currentIndex;
-
-
+@property(nonatomic,assign)CGPoint oldPoint;
 @end
 
 @implementation ViewController
@@ -23,14 +22,22 @@
 {
     [super viewDidLoad];
     
-    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
         [self.view addSubview:tableview];
         tableview.delegate = self;
         tableview.dataSource = self;
         
+        
+        tableview.translatesAutoresizingMaskIntoConstraints = NO;
+        NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:tableview attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0];
+        NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:tableview attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0];
+        NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:tableview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+        NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:tableview attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+        
+        [self.view addConstraints:@[left,right,top,bottom]];
+        
         tableview;
     });
-    
     
     
     //中间提示圆形view
@@ -181,7 +188,6 @@
     //这里的动画有个判断就是在3内，没有新的指令就执行
     NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
     
-    
     [[NSUserDefaults standardUserDefaults]setDouble:currentTime forKey:@"延时特效"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     double delayInSeconds = 0.1;
@@ -191,10 +197,10 @@
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             
-            //            tableView.contentOffset = self.currentPoint;
-            if (count!=0&&tableView.contentOffset.y>0) {
-                [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:count] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-            }
+            //            if (count!=0&&tableView.contentOffset.y>0) {
+            tableView.contentOffset = self.oldPoint;
+            [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:count] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            //            }
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(0,0), ^{
                 
                 dispatch_sync(dispatch_get_main_queue(), ^{
@@ -218,7 +224,7 @@
         
     });
     
-    
+    self.oldPoint = tableView.contentOffset;
     self.currentIndex = count;
     return count;
 }
@@ -277,5 +283,4 @@
     
     [self.navigationController pushViewController:personViewController animated:YES];
 }
-
 @end
