@@ -11,12 +11,13 @@
 
 @interface AddressBookViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,assign)NSInteger currentIndex;
-@property(nonatomic,assign)CGPoint currentPoint;
+
 
 @end
 
 @implementation AddressBookViewController
 @synthesize dataSource,friendAplha,friendDictionary,addressBook;
+
 
 
 - (void)viewDidLoad
@@ -171,11 +172,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    self.currentPoint = tableView.contentOffset;
+    
     self.label_tip.hidden = NO;
     NSInteger count = 0;
-    NSInteger oldcount = 0;
-    [friendAplha containsObject:title]?(count = [friendAplha indexOfObject:title]):(count =0);
+    
+    [friendAplha containsObject:title]?(count = [friendAplha indexOfObject:title]):(count = self.currentIndex);
     self.label_tip.text = title;
     
     //这里的动画有个判断就是在3内，没有新的指令就执行
@@ -184,16 +185,17 @@
     
     [[NSUserDefaults standardUserDefaults]setDouble:currentTime forKey:@"延时特效"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    double delayInSeconds = 0.3;
+    double delayInSeconds = 0.1;
     // 创建延期的时间 2S，因为dispatch_time使用的时间是纳秒，尼玛，比毫秒还小，太夸张了！！！
     dispatch_time_t delayInNanoSeconds =dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(delayInNanoSeconds, dispatch_get_global_queue(0, 0), ^{
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             
-            tableView.contentOffset = self.currentPoint;
-            [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:count] atScrollPosition:UITableViewScrollPositionNone animated:YES];
-            
+            //            tableView.contentOffset = self.currentPoint;
+            if (count!=0&&tableView.contentOffset.y>0) {
+                [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:count] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            }
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(0,0), ^{
                 
                 dispatch_sync(dispatch_get_main_queue(), ^{
@@ -218,11 +220,8 @@
     });
     
     
-    
-    
-    oldcount = self.currentIndex;
     self.currentIndex = count;
-    return oldcount;
+    return count;
 }
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
