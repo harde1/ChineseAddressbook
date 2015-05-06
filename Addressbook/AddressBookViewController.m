@@ -7,34 +7,52 @@
 //
 
 #import "AddressBookViewController.h"
-#import "RHAddressBook.h"
-#import "RHPerson.h"
-#import "pinyin.h"
-#import <AddressBookUI/AddressBookUI.h>
+
 
 @interface AddressBookViewController ()<UITableViewDataSource,UITableViewDelegate>
-{
-    RHAddressBook *addressBook;
-    NSMutableDictionary *friendDictionary;
-    NSMutableArray *friendAplha;
-    
-    NSMutableArray *dataSource;
-}
-@property (strong, nonatomic)UITableView *mtableView;
+@property(nonatomic,assign)NSInteger currentIndex;
+@property(nonatomic,assign)CGPoint currentPoint;
+
 @end
 
 @implementation AddressBookViewController
+@synthesize dataSource,friendAplha,friendDictionary,addressBook;
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    _mtableView = ({UITableView * tableview = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
         [self.view addSubview:tableview];
         tableview.delegate = self;
         tableview.dataSource = self;
+        
         tableview;
     });
+    
+    
+    
+    //中间提示圆形view
+    _label_tip = ({
+        UILabel * label = [UILabel new];
+        label.backgroundColor = [UIColor grayColor];
+        
+        label.text = @"A";
+        label.font = [UIFont boldSystemFontOfSize:25];
+        label.textColor = [UIColor whiteColor];
+        label.textAlignment = UIBaselineAdjustmentAlignCenters;
+        label.hidden = YES;
+        label.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame)/4., CGRectGetWidth(self.view.frame)/4.);
+        label.center = CGPointMake(CGRectGetWidth(self.view.frame)/2., CGRectGetHeight(self.view.frame)/2.-60);
+        
+        label.layer.cornerRadius = CGRectGetWidth(label.frame)/2.;
+        label.layer.masksToBounds = YES;
+        [self.view addSubview:label];
+        
+        label;
+    });
+    
     
     
     RHAddressBook *ab = [[RHAddressBook alloc] init] ;
@@ -61,6 +79,7 @@
     [self initData:ab];
 }
 
+
 -(void)initData:(RHAddressBook *)ad
 {
     addressBook = ad;
@@ -68,7 +87,7 @@
     NSString *regex = @"^[A-Za-z]+$";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *people = [addressBook peopleOrderedByUsersPreference];
+        NSArray *people = [self.addressBook peopleOrderedByUsersPreference];
         for (RHPerson *person in people) {
             NSString *c = [[person.name substringToIndex:1] uppercaseString];
             if ([predicate evaluateWithObject:c]) {
@@ -96,26 +115,26 @@
                 [currentSecArray addObject:person];
             }
             else {
-                [friendAplha addObject:spellKey];
+                [self.friendAplha addObject:spellKey];
                 NSMutableArray *currentSecArray = [[NSMutableArray alloc] initWithCapacity:0];
                 [currentSecArray addObject:person];
                 [sectionDict setObject:currentSecArray forKey:spellKey];
             }
         }
         
-        friendDictionary = sectionDict;
+        self.friendDictionary = sectionDict;
         
         //索引数组
-        dataSource = [[NSMutableArray alloc] init] ;
+        self.dataSource = [[NSMutableArray alloc] init] ;
         for(char c = 'A'; c <= 'Z'; c++ )
         {
-            [dataSource addObject:[NSString stringWithFormat:@"%c",c]];
+            [self.dataSource addObject:[NSString stringWithFormat:@"%c",c]];
         }
         
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_mtableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
-            [_mtableView reloadData];
+            [self.mtableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
+            [self.mtableView reloadData];
         });
     });
 }
@@ -139,8 +158,11 @@
     }
     NSString *key = [friendAplha objectAtIndex:section];
     view.textLabel.text = key;
+    
     return view;
 }
+
+
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
@@ -149,15 +171,58 @@
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
+    self.currentPoint = tableView.contentOffset;
+    self.label_tip.hidden = NO;
     NSInteger count = 0;
-    for(NSString *character in friendAplha)
-    {
-        if([character isEqualToString:title]) {
-            return count;
-        }
-        count ++;
-    }
-    return count;
+    NSInteger oldcount = 0;
+    [friendAplha containsObject:title]?(count = [friendAplha indexOfObject:title]):(count =0);
+    self.label_tip.text = title;
+    
+    //这里的动画有个判断就是在3内，没有新的指令就执行
+    NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
+    
+    
+    [[NSUserDefaults standardUserDefaults]setDouble:currentTime forKey:@"延时特效"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    double delayInSeconds = 0.3;
+    // 创建延期的时间 2S，因为dispatch_time使用的时间是纳秒，尼玛，比毫秒还小，太夸张了！！！
+    dispatch_time_t delayInNanoSeconds =dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(delayInNanoSeconds, dispatch_get_global_queue(0, 0), ^{
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            
+            tableView.contentOffset = self.currentPoint;
+            [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:count] atScrollPosition:UITableViewScrollPositionNone animated:YES];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(0,0), ^{
+                
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    NSTimeInterval timeNow = [[NSDate date] timeIntervalSince1970];
+                    NSTimeInterval timeOld =[[NSUserDefaults standardUserDefaults]integerForKey:@"延时特效"];
+                    //                    NSLog(@"%lf,%lf",timeNow,timeOld);
+                    if (timeNow-timeOld>1) {
+                        self.label_tip.alpha = 1;
+                        [UIView animateWithDuration:1 animations:^{
+                            self.label_tip.alpha = 0;
+                        } completion:^(BOOL finished) {
+                            self.label_tip.alpha = 1;
+                            self.label_tip.hidden = YES;
+                        }];
+                    }
+                });
+                
+            });
+            
+        });
+        
+    });
+    
+    
+    
+    
+    oldcount = self.currentIndex;
+    self.currentIndex = count;
+    return oldcount;
 }
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -186,6 +251,7 @@
     RHPerson *person    = [alphaArray objectAtIndex:indexPath.row];
     person.firstNamePhonetic = @"";
     cell.textLabel.text = person.name;
+    
     return cell;
 }
 
